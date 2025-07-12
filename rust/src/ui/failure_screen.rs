@@ -7,8 +7,6 @@ use crate::game_signals::GameSignals;
 #[class(init, base=Control)]
 pub struct FailureScreen {
     base: Base<Control>,
-    #[init(node = "/root/GlobalGameSignals")]
-    game_signals: OnReady<Gd<GameSignals>>,
 }
 
 #[godot_api]
@@ -17,7 +15,7 @@ impl IControl for FailureScreen {
 
         // Hide the failure screen initially
         self.base_mut().set_visible(false);
-        self.game_signals.signals().game_failure().connect_other(self, Self::show_screen);
+        GameSignals::singleton().signals().game_failure().connect_other(self, Self::show_screen);
 
         // Connect the retry button signal
         let retry_button = self.base().get_node_as::<Button>("RetryButton");
@@ -40,6 +38,6 @@ impl FailureScreen {
         self.base_mut().set_visible(false);
 
         // We'll emit the game started signal to restart
-        self.game_signals.bind_mut().emit_game_started();
+        GameSignals::singleton().signals().game_started().emit();
     }
 }

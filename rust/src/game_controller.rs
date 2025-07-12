@@ -1,14 +1,13 @@
+use crate::game_signals::GameSignals;
 use godot::classes::Timer;
 use godot::prelude::*;
-use crate::game_signals::GameSignals;
+use crate::godot_print_err;
 
 #[derive(GodotClass)]
 #[class(init, base = Node3D)]
 pub struct Game {
     base: Base<Node3D>,
 
-    #[init(node = "/root/GlobalGameSignals")]
-    game_signals: OnReady<Gd<GameSignals>>,
     #[export]
     time_limit: f64,
     timer: Option<Gd<Timer>>,
@@ -17,8 +16,28 @@ pub struct Game {
 #[godot_api]
 impl INode3D for Game {
     fn ready(&mut self) {
-        self.game_signals.signals().game_started().connect_other(self, Self::start);
-        self.game_signals.signals().game_stopped().connect_other(self, Self::stop);
+        GameSignals::singleton()
+            .signals()
+            .game_started()
+            .connect_other(self, Self::start);
+        GameSignals::singleton()
+            .signals()
+            .game_stopped()
+            .connect_other(self, Self::stop);
+
+        GameSignals::singleton()
+            .signals()
+            .game_victory()
+            .connect_self(|this| {
+                this.signals().game_stopped().emit();
+            });
+
+        GameSignals::singleton()
+            .signals()
+            .game_failure()
+            .connect_self(|this| {
+                this.signals().game_stopped().emit();
+            });
     }
 }
 
@@ -30,10 +49,8 @@ impl Game {
         timer.set_autostart(true);
         self.base_mut().add_child(&timer);
         self.timer = Some(timer.clone());
-        let mut signal = self.game_signals.clone();
-        godot::task::spawn(async move {
-            timer.signals().timeout().to_future().await;
-            signal.bind_mut().emit_game_victory();
+        timer.signals().timeout().connect(|| {
+            GameSignals::singleton().signals().game_victory().emit();
         });
     }
 

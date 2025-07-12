@@ -1,3 +1,4 @@
+use godot::classes::Engine;
 use godot::prelude::*;
 
 /// GameSignals is a singleton that manages global game events
@@ -11,9 +12,7 @@ pub struct GameSignals {
 #[godot_api]
 impl INode for GameSignals {
     fn init(base: Base<Node>) -> Self {
-        Self {
-            base,
-        }
+        Self { base }
     }
 
     fn ready(&mut self) {
@@ -23,6 +22,14 @@ impl INode for GameSignals {
 
 #[godot_api]
 impl GameSignals {
+    pub const SINGLETON: &'static str = "Signals";
+    pub fn singleton() -> Gd<GameSignals> {
+        match Engine::singleton().get_singleton(Self::SINGLETON) {
+            Some(singleton) => singleton.cast::<Self>(),
+            None => panic!("Can not find GameSignals"),
+        }
+    }
+
     #[signal]
     pub fn game_started();
 
@@ -34,27 +41,4 @@ impl GameSignals {
 
     #[signal]
     pub fn game_stopped();
-
-    /// Emit the game_started signal
-    #[func]
-    pub fn emit_game_started(&mut self) {
-        godot_print!("Game started signal emitted");
-        self.signals().game_started().emit();
-    }
-
-    /// Emit the game_victory signal
-    #[func]
-    pub fn emit_game_victory(&mut self) {
-        godot_print!("Game victory signal emitted");
-        self.signals().game_stopped().emit();
-        self.signals().game_victory().emit();
-    }
-
-    /// Emit the game_failure signal
-    #[func]
-    pub fn emit_game_failure(&mut self) {
-        godot_print!("Game failure signal emitted");
-        self.signals().game_stopped().emit();
-        self.signals().game_failure().emit();
-    }
 }

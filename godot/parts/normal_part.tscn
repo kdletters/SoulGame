@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://dhe10baynsi14"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_meahj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_meahj"]
+emission_enabled = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_meahj"]
+
+[node name="Part" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_meahj")
+
+[node name="Pillar" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.7, 0)
+material_override = SubResource("StandardMaterial3D_meahj")
+mesh = SubResource("CylinderMesh_meahj")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+text = "你好"

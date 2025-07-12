@@ -7,14 +7,11 @@ use crate::game_signals::GameSignals;
 #[class(init, base=Control)]
 pub struct StartMenu {
     base: Base<Control>,
-    #[init(node = "/root/GlobalGameSignals")]
-    game_signals: OnReady<Gd<GameSignals>>,
 }
 
 #[godot_api]
 impl IControl for StartMenu {
     fn ready(&mut self) {
-
         // Connect the start button signal
         let start_button = self.base().get_node_as::<Button>("StartButton");
         start_button.signals().pressed().connect_other(self, Self::on_start_button_pressed);
@@ -31,6 +28,6 @@ impl StartMenu {
         self.base_mut().set_visible(false);
 
         // Emit the game started signal
-        self.game_signals.bind_mut().emit_game_started();
+        GameSignals::singleton().signals().game_started().emit();
     }
 }
