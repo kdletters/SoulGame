@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://26ih0stq3yba"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yfr2q"]
+albedo_color = Color(0.169245, 0.169245, 0.169245, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_meahj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xrih2"]
+albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_yfr2q"]
+
+[node name="Button1001" type="ButtonPart"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_yfr2q")
+mesh = SubResource("BoxMesh_meahj")
+
+[node name="Pillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_xrih2")
+mesh = SubResource("SphereMesh_yfr2q")

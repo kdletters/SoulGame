@@ -1,0 +1,12 @@
+[package]
+name = "soul-game"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+godot = "0.3.2"
+tokio = { version = "1.46.1", features = ["full"] }
+godot_tokio = "0.3.1"
