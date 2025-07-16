@@ -1,6 +1,8 @@
 use crate::game_signals::GameSignals;
 use godot::classes::notify::Node3DNotification;
-use godot::classes::{Engine, INode3D, InputEvent, InputEventKey, MeshInstance3D, Node3D, StandardMaterial3D, Timer};
+use godot::classes::{
+    Engine, INode3D, InputEvent, InputEventKey, MeshInstance3D, Node3D, StandardMaterial3D, Timer,
+};
 use godot::global::Key;
 use godot::prelude::*;
 use godot_tokio::AsyncRuntime;
@@ -85,7 +87,11 @@ impl ButtonPart {
         godot_print!("Button part started");
         self.active = true;
         self.reset_timer();
-        self.pillar.get_material_override().unwrap().cast::<StandardMaterial3D>().set_emission_energy_multiplier(10.0);
+        self.pillar
+            .get_material_override()
+            .unwrap()
+            .cast::<StandardMaterial3D>()
+            .set_emission_energy_multiplier(10.0);
     }
     /// Stop the button part
     #[func]
@@ -93,7 +99,11 @@ impl ButtonPart {
         godot_print!("Button part stopped");
         self.active = false;
         self.stop_timer();
-        self.pillar.get_material_override().unwrap().cast::<StandardMaterial3D>().set_emission_energy_multiplier(0.0);
+        self.pillar
+            .get_material_override()
+            .unwrap()
+            .cast::<StandardMaterial3D>()
+            .set_emission_energy_multiplier(0.0);
     }
 
     /// Reset the timer
