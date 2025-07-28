@@ -10,7 +10,7 @@ emission_energy_multiplier = 0.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_i05et"]
 
-[node name="Button1001" type="ButtonPart"]
+[node name="Button1001" type="RedButton"]
 
 [node name="Base" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 0, 0)

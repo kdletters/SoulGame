@@ -1,5 +1,7 @@
 use godot::classes::Engine;
 use godot::prelude::*;
+use godot_tokio::AsyncRuntime;
+use std::time::Duration;
 
 /// GameSignals is a singleton that manages global game events
 #[derive(GodotClass)]
@@ -41,4 +43,18 @@ impl GameSignals {
 
     #[signal]
     pub fn game_stopped();
+}
+
+impl GameSignals {
+    pub fn emit_game_failure(&mut self) {
+        godot::task::spawn(async {
+            AsyncRuntime::runtime()
+                .spawn(async {
+                    tokio::time::sleep(Duration::from_micros(1)).await;
+                })
+                .await
+                .unwrap();
+            GameSignals::singleton().signals().game_failure().emit()
+        });
+    }
 }

@@ -10,7 +10,7 @@ use godot_tokio::AsyncRuntime;
 /// ButtonPart is a game part that requires the player to press a specific key within a time limit
 #[derive(GodotClass)]
 #[class(init, base=Node3D)]
-pub struct ButtonPart {
+pub struct RedButton {
     base: Base<Node3D>,
     #[init(node = "%Pillar")]
     pillar: OnReady<Gd<MeshInstance3D>>,
@@ -25,12 +25,11 @@ pub struct ButtonPart {
 }
 
 #[godot_api]
-impl INode3D for ButtonPart {
+impl INode3D for RedButton {
     fn on_notification(&mut self, what: Node3DNotification) {
         match what {
             Node3DNotification::PREDELETE => {
                 if let Some(timer) = &self.timer {
-                    godot_print!("ButtonPart free timer");
                     timer.clone().free();
                     self.timer = None;
                 }
@@ -80,7 +79,7 @@ impl INode3D for ButtonPart {
 }
 
 #[godot_api]
-impl ButtonPart {
+impl RedButton {
     /// Start the button part
     #[func]
     pub fn start(&mut self) {
@@ -129,7 +128,6 @@ impl ButtonPart {
         }
 
         if self.pressed {
-            godot_print!("abaaba");
             self.pressed = false;
             return;
         }
