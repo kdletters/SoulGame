@@ -1,9 +1,11 @@
 use crate::game_signals::GameSignals;
 use godot::classes::notify::Node3DNotification;
-use godot::classes::{Engine, INode3D, Input, InputEvent, InputEventKey, MeshInstance3D, Node3D, StandardMaterial3D, Time, Timer};
-use godot::global::{Key, randf, randf_range};
+use godot::classes::{
+    INode3D, Input, MeshInstance3D, Node3D, StandardMaterial3D,
+    Time, Timer,
+};
+use godot::global::{randf_range, Key};
 use godot::prelude::*;
-use godot_tokio::AsyncRuntime;
 
 /// ButtonPart is a game part that requires the player to press a specific key within a time limit
 #[derive(GodotClass)]
@@ -16,8 +18,6 @@ pub struct YellowButton {
     timer1: Gd<Timer>,
     #[init(val = Timer::new_alloc())]
     timer2: Gd<Timer>,
-    #[init(val = Key::J)]
-    required_key: Key, // Key code that player needs to press
     #[init(val = (5.0, 10.0))]
     delay_time: (f64, f64), // Time limit in seconds
     #[init(val = 5.0)]
@@ -38,6 +38,40 @@ impl INode3D for YellowButton {
                 self.timer1.clone().free();
             }
             _ => {}
+        }
+    }
+
+    fn process(&mut self, delta: f64) {
+        if !self.active {
+            return;
+        }
+
+        // 检查特定键是否被按下
+        if Input::singleton().is_action_pressed("yellow_button") {
+            // 如果键刚开始被按下，记录开始时间
+            if !self.pressed {
+                self.pressed = true;
+                self.press_start_time = Time::singleton().get_unix_time_from_system();
+                return;
+            }
+
+            // 计算按下持续时间
+            let current_duration =
+                Time::singleton().get_unix_time_from_system() - self.press_start_time;
+
+            // 检查是否达到所需持续时间
+            if current_duration >= self.press_time {
+                godot_print!("按键已持续按下2秒钟！");
+                // 执行你的操作...
+                // 重置状态（如果你只想触发一次）
+                self.start();
+            }
+        } else {
+            // 键被释放，重置状态
+            if self.pressed {
+                self.stop();
+                GameSignals::singleton().bind_mut().emit_game_failure();
+            }
         }
     }
 
@@ -68,38 +102,6 @@ impl INode3D for YellowButton {
             .signals()
             .game_stopped()
             .connect_other(self, Self::stop);
-    }
-    fn process(&mut self, delta: f64) {
-        if !self.active {
-            return;
-        }
-
-        // 检查特定键是否被按下
-        if Input::singleton().is_action_pressed("yellow_button") {
-            // 如果键刚开始被按下，记录开始时间
-            if !self.pressed {
-                self.pressed = true;
-                self.press_start_time = Time::singleton().get_unix_time_from_system();
-                return;
-            }
-
-            // 计算按下持续时间
-            let current_duration = Time::singleton().get_unix_time_from_system() - self.press_start_time;
-
-            // 检查是否达到所需持续时间
-            if current_duration >= self.press_time {
-                godot_print!("按键已持续按下2秒钟！");
-                // 执行你的操作...
-                // 重置状态（如果你只想触发一次）
-                self.start();
-            }
-        } else {
-            // 键被释放，重置状态
-            if self.pressed {
-                self.stop();
-                GameSignals::singleton().bind_mut().emit_game_failure();
-            }
-        }
     }
 }
 
