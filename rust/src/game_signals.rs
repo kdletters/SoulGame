@@ -46,6 +46,7 @@ impl GameSignals {
 }
 
 impl GameSignals {
+    /// godot中，同一帧内调用信号会导致循环引用，等待一下
     pub fn emit_game_failure(&mut self) {
         godot::task::spawn(async {
             AsyncRuntime::runtime()

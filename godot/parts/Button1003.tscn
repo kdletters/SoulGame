@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgmwjhosvou1t"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_meahj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_du487"]
+albedo_color = Color(0, 0.766667, 1, 1)
+emission_enabled = true
+emission = Color(1, 1, 0, 1)
+emission_energy_multiplier = 0.0
+grow_amount = 0.305
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_meahj"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_8t881"]
+viewport_path = NodePath("Sprite3D/SubViewport")
+
+[node name="Button1003" type="BlueButton"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_meahj")
+
+[node name="Pillar" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.7, 0)
+material_override = SubResource("StandardMaterial3D_du487")
+mesh = SubResource("CylinderMesh_meahj")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+text = "蓝色按钮，按L键"
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8554, 0)
+texture = SubResource("ViewportTexture_8t881")
+
+[node name="SubViewport" type="SubViewport" parent="Sprite3D"]
+transparent_bg = true
+size = Vector2i(300, 100)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Sprite3D/SubViewport"]
+follow_viewport_scale = 0.001
+
+[node name="ProgressBar" type="ProgressBar" parent="Sprite3D/SubViewport/CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -13.5
+offset_right = 150.0
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2

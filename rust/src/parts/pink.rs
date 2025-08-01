@@ -1,6 +1,7 @@
 use crate::game_signals::GameSignals;
 use godot::classes::{
-    Engine, GDScript, INode3D, Input, MeshInstance3D, Node3D, StandardMaterial3D, Time, Timer,
+    Engine, GDScript, INode3D, Input, InputEvent, MeshInstance3D, Node3D, StandardMaterial3D, Time,
+    Timer,
 };
 use godot::prelude::*;
 use std::f64::consts::PI;
@@ -24,21 +25,6 @@ pub struct PinkButton {
 
 #[godot_api]
 impl INode3D for PinkButton {
-    fn process(&mut self, delta: f64) {
-        if !self.active {
-            return;
-        }
-
-        // 检查特定键是否被按下
-        if Input::singleton().is_action_just_pressed("pink_button") {
-            if Engine::singleton().get_time_scale() <= self.time_scale_range.start {
-                return;
-            }
-            self.decrease_global_time_scale();
-            self.rotate_counterclockwise();
-        }
-    }
-
     fn ready(&mut self) {
         self.timer.set_wait_time(1.0);
         self.timer.set_one_shot(false);
@@ -57,6 +43,21 @@ impl INode3D for PinkButton {
             .signals()
             .game_stopped()
             .connect_other(self, Self::stop);
+    }
+
+    fn input(&mut self, event: Gd<InputEvent>) {
+        if !self.active {
+            return;
+        }
+
+        // 检查特定键是否被按下
+        if Input::singleton().is_action_just_pressed("pink_button") {
+            if Engine::singleton().get_time_scale() <= self.time_scale_range.start {
+                return;
+            }
+            self.decrease_global_time_scale();
+            self.rotate_counterclockwise();
+        }
     }
 }
 

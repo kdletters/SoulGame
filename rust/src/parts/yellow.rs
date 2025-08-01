@@ -1,10 +1,14 @@
+/*!
+齿轮会随着时间旋转，每转一次提高0.1倍时间流速，按下按键则减少0.1时间流速（不直接导致失败）
+初始一倍速，每转一圈增加一倍速，上限三倍速，下限0.5倍速
+*/
+
 use crate::game_signals::GameSignals;
 use godot::classes::notify::Node3DNotification;
 use godot::classes::{
-    INode3D, Input, MeshInstance3D, Node3D, StandardMaterial3D,
-    Time, Timer,
+    INode3D, Input, InputEvent, MeshInstance3D, Node3D, StandardMaterial3D, Time, Timer,
 };
-use godot::global::{randf_range, Key};
+use godot::global::{Key, randf_range};
 use godot::prelude::*;
 
 /// ButtonPart is a game part that requires the player to press a specific key within a time limit
@@ -41,7 +45,36 @@ impl INode3D for YellowButton {
         }
     }
 
-    fn process(&mut self, delta: f64) {
+    fn ready(&mut self) {
+        // Create a timer for the time limit
+        self.timer1.set_one_shot(true);
+        self.timer1
+            .signals()
+            .timeout()
+            .connect_other(self, Self::start_check_press);
+        let timer = self.timer1.clone();
+        self.base_mut().add_child(&timer);
+
+        self.timer2.set_wait_time(self.time_limit);
+        self.timer2.set_one_shot(true);
+        self.timer2
+            .signals()
+            .timeout()
+            .connect_other(self, Self::on_timeout);
+        let timer = self.timer2.clone();
+        self.base_mut().add_child(&timer);
+
+        GameSignals::singleton()
+            .signals()
+            .game_started()
+            .connect_other(self, Self::start);
+        GameSignals::singleton()
+            .signals()
+            .game_stopped()
+            .connect_other(self, Self::stop);
+    }
+
+    fn input(&mut self, event: Gd<InputEvent>) {
         if !self.active {
             return;
         }
@@ -73,35 +106,6 @@ impl INode3D for YellowButton {
                 GameSignals::singleton().bind_mut().emit_game_failure();
             }
         }
-    }
-
-    fn ready(&mut self) {
-        // Create a timer for the time limit
-        self.timer1.set_one_shot(true);
-        self.timer1
-            .signals()
-            .timeout()
-            .connect_other(self, Self::start_check_press);
-        let timer = self.timer1.clone();
-        self.base_mut().add_child(&timer);
-
-        self.timer2.set_wait_time(self.time_limit);
-        self.timer2.set_one_shot(true);
-        self.timer2
-            .signals()
-            .timeout()
-            .connect_other(self, Self::on_timeout);
-        let timer = self.timer2.clone();
-        self.base_mut().add_child(&timer);
-
-        GameSignals::singleton()
-            .signals()
-            .game_started()
-            .connect_other(self, Self::start);
-        GameSignals::singleton()
-            .signals()
-            .game_stopped()
-            .connect_other(self, Self::stop);
     }
 }
 

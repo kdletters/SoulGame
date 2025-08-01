@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ts53lmev5p4x" path="res://ui/FailureScreen.tscn" id="2_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://dc80pno2wfr73" path="res://ui/StartMenu.tscn" id="3_fos0i"]
 [ext_resource type="PackedScene" uid="uid://bsyr21ahqfqr8" path="res://ui/VictoryScreen.tscn" id="4_3dxm6"]
-[ext_resource type="PackedScene" uid="uid://c067blo18nt8g" path="res://parts/Button1005.tscn" id="4_cm0pq"]
+[ext_resource type="PackedScene" uid="uid://cgmwjhosvou1t" path="res://parts/Button1003.tscn" id="4_cm0pq"]
 
 [sub_resource type="Environment" id="Environment_cm0pq"]
 
@@ -30,4 +30,4 @@ environment = SubResource("Environment_cm0pq")
 
 [node name="Parts" type="Node" parent="."]
 
-[node name="Button1005" parent="Parts" instance=ExtResource("4_cm0pq")]
+[node name="Button1003" parent="Parts" instance=ExtResource("4_cm0pq")]
